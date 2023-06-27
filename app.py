@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+import os
+import ast
 
 app = Flask(__name__)
 
@@ -12,11 +14,28 @@ def handle_code():
         return jsonify({'error': 'No file selected for uploading'}), 400
 
     if file:
-        # TODO: Save the file to a location where it can be accessed by your code analysis module.
-        print('File received: ' + file.filename)
+        # Save the file to a location where it can be accessed by your code analysis module.
 
-        # TODO: Convert the code file to a format that can be parsed by GPT or your code understanding module.
+        file_path = os.path.join("uploads", file.filename)
+        file.save(file_path)
+        print('File received: ' + file.filename)
+        print('File received and saved to: ' + file_path)
+
+        with open(file_path, 'r') as code_file:
+            code_content = code_file.read()
+
+        # Now, code_content is a string containing the code from the uploaded file.
+
+        # Convert the code file to a format that can be parsed by GPT or your code understanding module.
         # This might involve parsing the code into an Abstract Syntax Tree (AST) and converting the AST into a format that GPT can understand.
+
+        # Parse the code into an AST.
+        tree = ast.parse(code_content)
+
+        # Convert the AST into a string representation.
+        ast_string = ast.dump(tree)
+
+        # Now, ast_string is a string representation of the AST.
 
         return jsonify({'message': 'File successfully uploaded'}), 200
 
