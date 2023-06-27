@@ -68,7 +68,7 @@ def handle_query():
     # Define the headers. Replace 'your-api-key' with your actual OpenAI API key.
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer your-api-key'
+        'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpbnRlZ3JhdGlvbi1hZGxlciIsImF1ZCI6InNtYXJ0X3Byb21wdCIsImV4cCI6MTY4ODQ5MDcwMX0.KYfmZ_HuQDd5Yhe0IXpkWWLJqkJ0ZHdjkkYPvWxJhN9fxru7iIRCZqd8BY8UBub7eovWhDxNIucoS1Dd5wj4LQ'
     }
 
     # Define the data. The 'prompt' is the combination of code context and user query.
