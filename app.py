@@ -15,7 +15,7 @@ def handle_code():
     
     if file.filename == '':
         return jsonify({'error': 'No file selected for uploading'}), 400
-    
+    print('penis')
     if file:
         # Save the file to a location where it can be accessed by your code analysis module.    
         file_path = os.path.join("uploads", file.filename)
@@ -30,8 +30,10 @@ def handle_code():
 
         # Convert the code file to a format that can be parsed by GPT or your code understanding module.
         # This might involve parsing the code into an Abstract Syntax Tree (AST) and converting the AST into a format that GPT can understand.
+
         # Parse the code into an AST.
         tree = ast.parse(code_content)
+
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
 
@@ -85,7 +87,7 @@ def handle_answer():
     code = data['code']
 
     # TODO: Generate an answer based on the query and code.
-    # This might involve using the GPT-3 model to generate a natural language answer based on the query and the understood code.
+    # Use GPT-4 model to generate a natural language answer based on the query and the understood code.
 
     # Placeholder for the generated answer.
     answer = "Generated answer goes here."
