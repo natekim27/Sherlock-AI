@@ -6,6 +6,8 @@ import pip._vendor.requests as requests
 
 app = Flask(__name__)
 
+code_context = ""
+
 @app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
     if 'file' not in request.files:
@@ -36,6 +38,9 @@ def handle_code():
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
 
+        # Convert the AST into a string representation and store it in the global variable
+        code_context = ast.dump(tree)
+
         print('here is your code, in readable form: ' + ast_string)
 
         # Now, ast_string is a string representation of the AST.
@@ -45,24 +50,30 @@ def handle_code():
 
 @app.route('/api/query', methods=['POST'])
 def handle_query():
+    global code_context  # Use the global code_context variable
+
     query = request.json.get('query')
+
     if not query:
         return jsonify({'error': 'No query provided'}), 400
+
+    # Prepare the prompt for the GPT-3 model by including the code context
+    prompt = f'{code_context}\n{query}'
 
     # Define the API endpoint
     endpoint = 'https://smartprompt-globaldev.zoomdev.us/v1/zoom-ai-hackathon/invoke'
 
-    # Define the headers. Replace 'api-key' with Kevin's OpenAI API key.
+    # Define the headers. Replace 'your-api-key' with your actual OpenAI API key.
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpbnRlZ3JhdGlvbi1hZGxlciIsImF1ZCI6InNtYXJ0X3Byb21wdCIsImV4cCI6MTY4ODQ5MDcwMX0.KYfmZ_HuQDd5Yhe0IXpkWWLJqkJ0ZHdjkkYPvWxJhN9fxru7iIRCZqd8BY8UBub7eovWhDxNIucoS1Dd5wj4LQ'
+        'Authorization': 'Bearer your-api-key'
     }
 
-    # Define the data. The 'prompt' is the query from the user.
+    # Define the data. The 'prompt' is the combination of code context and user query.
     # 'max_tokens' is the maximum length of the generated response.
     data = {
-        'prompt': query,
-        'max_tokens': 150
+        'prompt': prompt,
+        'max_tokens': 100
     }
 
     # Make the POST request to the API
