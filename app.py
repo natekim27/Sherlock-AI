@@ -10,11 +10,13 @@ code_context = ""
 
 @app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
+    global code_context  # Use the global code_context variable
+
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
 
     file = request.files['file']
-    
+
     if file.filename == '':
         return jsonify({'error': 'No file selected for uploading'}), 400
     if file:
@@ -25,25 +27,25 @@ def handle_code():
         print('File received and saved to: ' + file_path)
 
         with open(file_path, 'r') as code_file:
-            code_content = code_file.read()
+            code_lines = code_file.readlines()
 
-        # Now, code_content is a string containing the code from the uploaded file.
+        # Add line numbers to the code
+        numbered_code_lines = [f"{i+1}: {line}" for i, line in enumerate(code_lines)]
+        numbered_code = "".join(numbered_code_lines)
+
+        # Now, numbered_code is a string containing the code from the uploaded file with line numbers.
 
         # Convert the code file to a format that can be parsed by GPT or your code understanding module.
         # This might involve parsing the code into an Abstract Syntax Tree (AST) and converting the AST into a format that GPT can understand.
 
         # Parse the code into an AST.
-        tree = ast.parse(code_content)
+        tree = ast.parse(numbered_code)
 
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
 
-        # Convert the AST into a string representation and store it in the global variable
-        code_context = ast.dump(tree)
-
-        print('here is your code, in readable form: ' + ast_string)
-
-        # Now, ast_string is a string representation of the AST.
+        # Now, ast_string is a string representation of the AST. You can use this as the code context for your GPT-3 queries.
+        code_context = ast_string
 
         return jsonify({'message': 'File successfully uploaded'}), 200
 
@@ -57,7 +59,7 @@ def handle_query():
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
-    # Prepare the prompt for the GPT-3 model by including the code context
+    # Prepare the prompt for the LLM model by including the code context
     prompt = f'{code_context}\n{query}'
 
     # Define the API endpoint
@@ -97,7 +99,7 @@ def handle_answer():
     code = data['code']
 
     # TODO: Generate an answer based on the query and code.
-    # Use GPT-4 model to generate a natural language answer based on the query and the understood code.
+    # Use LLM model to generate a natural language answer based on the query and the understood code.
 
     # Placeholder for the generated answer.
     answer = "Generated answer goes here."
