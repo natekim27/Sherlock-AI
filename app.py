@@ -4,7 +4,7 @@ import ast
 
 app = Flask(__name__)
 
-@app.route('/api/code', methods=['POST'])
+@app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
@@ -34,6 +34,8 @@ def handle_code():
 
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
+
+        print('here is your code, in readable form: ' + ast_string)
 
         # Now, ast_string is a string representation of the AST.
 
