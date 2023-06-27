@@ -33,8 +33,6 @@ def handle_code():
         # Parse the code into an AST.
         tree = ast.parse(code_content)
 
-        print(tree)
-
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree, include_attributes=True, indent=2)
 
