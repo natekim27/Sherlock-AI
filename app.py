@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import os
 import ast
+import json
+import pip._vendor.requests as requests
 
 app = Flask(__name__)
 
@@ -42,17 +44,35 @@ def handle_code():
 
 @app.route('/api/query', methods=['POST'])
 def handle_query():
-    data = request.get_json()
-    if 'query' not in data:
-        return jsonify({'error': 'No query in the request'}), 400
+    query = request.json.get('query')
+    if not query:
+        return jsonify({'error': 'No query provided'}), 400
 
-    query = data['query']
+    # Define the API endpoint
+    endpoint = 'https://chatgptAPI (KEVIN THIS IS ALL YOU)'
 
-    # TODO: Pass the query to your query understanding module. 
-    # This might involve using natural language processing techniques or the GPT-3 model to understand the query in the context of the code.
+    # Define the headers. Replace 'api-key' with Kevin's OpenAI API key.
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer api-key'
+    }
 
-    print('Query received: ' + query)
-    return jsonify({'message': 'Query successfully received'}), 200
+    # Define the data. The 'prompt' is the query from the user.
+    # 'max_tokens' is the maximum length of the generated response.
+    data = {
+        'prompt': query,
+        'max_tokens': 150
+    }
+
+    # Make the POST request to the API
+    response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+
+    # Parse the response
+    if response.status_code == 200:
+        result = response.json()
+        return jsonify({'message': result['choices'][0]['text'].strip()}), 200
+    else:
+        return jsonify({'error': "An error occurred: " + response.text}), 400
 
 
 @app.route('/api/answer', methods=['POST'])
