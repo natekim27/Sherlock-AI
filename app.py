@@ -15,7 +15,6 @@ def handle_code():
     
     if file.filename == '':
         return jsonify({'error': 'No file selected for uploading'}), 400
-    print('penis')
     if file:
         # Save the file to a location where it can be accessed by your code analysis module.    
         file_path = os.path.join("uploads", file.filename)
