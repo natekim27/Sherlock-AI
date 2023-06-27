@@ -10,12 +10,12 @@ def handle_code():
         return jsonify({'error': 'No file part in the request'}), 400
 
     file = request.files['file']
+    
     if file.filename == '':
         return jsonify({'error': 'No file selected for uploading'}), 400
-
+    print('penis')
     if file:
-        # Save the file to a location where it can be accessed by your code analysis module.
-
+        # Save the file to a location where it can be accessed by your code analysis module.    
         file_path = os.path.join("uploads", file.filename)
         file.save(file_path)
         print('File received: ' + file.filename)
