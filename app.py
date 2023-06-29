@@ -36,11 +36,14 @@ def handle_code():
         tree = ast.parse(code_content)
 
         # Convert the AST into a string representation.
-        ast_string = ast.dump(tree, include_attributes=True)
+        ast_string = ast.dump(tree, indent=2)
 
         code_ctx = ast_string
 
         print('here is your code, in readable form: ' + ast_string)
+        astfile = open('ast.txt', 'w')
+        astfile.write(ast_string)
+        astfile.close
 
         # Now, ast_string is a string representation of the AST.
 
