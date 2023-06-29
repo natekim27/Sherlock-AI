@@ -36,7 +36,7 @@ def handle_code():
         tree = ast.parse(code_content)
 
         # Convert the AST into a string representation.
-        ast_string = ast.dump(tree, indent=2)
+        ast_string = ast.dump(tree)
 
         code_ctx = ast_string
 
@@ -54,15 +54,17 @@ def handle_code():
 def handle_query():
     global code_ctx
     data = request.get_json()
-    if 'messages' not in data:
+    if 'query' not in data:
         return jsonify({'error': 'No messages provided'}), 400
+    query = data['query']
 
     # Extract the last user's message as the query
-    messages = data['messages']
-    user_messages = [message for message in messages if message['role'] == 'user']
-    if not user_messages:
-        return jsonify({'error': 'No user messages provided'}), 400
-    query = user_messages[-1]['message']
+    # messages = data['messages']
+    # user_messages = [message for message in messages if message['role'] == 'user']
+    # if not user_messages:
+    #     return jsonify({'error': 'No user messages provided'}), 400
+    # query = user_messages[-1]['message']
+    print(query)
     # Define the API endpoint
     endpoint = 'https://smartprompt-globaldev.zoomdev.us/v1/zoom-ai-hackathon/invoke'
 
@@ -87,8 +89,8 @@ def handle_query():
     }
 
     # Make the POST request to the API
-    response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
-
+    # response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
+    
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
 
     # Parse the response
@@ -116,6 +118,8 @@ def handle_answer():
     answer = "Generated answer goes here."
 
     return jsonify({'answer': answer}), 200
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
