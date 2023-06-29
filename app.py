@@ -6,7 +6,7 @@ import pip._vendor.requests as requests
 
 app = Flask(__name__)
 
-code_ctx = ''
+code_ctx = []
 @app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
     global code_ctx
@@ -56,15 +56,14 @@ def handle_query():
     data = request.get_json()
     if 'query' not in data:
         return jsonify({'error': 'No messages provided'}), 400
-    query = data['query']
-
+    msg = {"message": data['query'], "role": "user"}
+    code_ctx.append(msg)
     # Extract the last user's message as the query
     # messages = data['messages']
     # user_messages = [message for message in messages if message['role'] == 'user']
     # if not user_messages:
     #     return jsonify({'error': 'No user messages provided'}), 400
     # query = user_messages[-1]['message']
-    print(query)
     # Define the API endpoint
     endpoint = 'https://smartprompt-globaldev.zoomdev.us/v1/zoom-ai-hackathon/invoke'
 
@@ -77,12 +76,7 @@ def handle_query():
     # Define the data. The 'prompt' is the query from the user.
     # 'max_tokens' is the maximum length of the generated response.
     data = {
-        "messages": [
-            {
-                "role": "user",
-                "message": query
-            }
-        ],
+        "messages": code_ctx,
         "model": "claude-instant-v1",
         "task_id": "1",
         "user_name": "test"
@@ -90,9 +84,10 @@ def handle_query():
 
     # Make the POST request to the API
     # response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
-    
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-
+    response_msg = response.json()['result']
+    code_ctx.append({"role": "assistant", "message": response_msg})
+    print(code_ctx)
     # Parse the response
     if response.status_code == 200:
         resultjson = response.json()
