@@ -81,11 +81,6 @@ def handle_query():
 
     # Make the POST request to the API
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-<<<<<<< HEAD
-=======
-    print(response)
-
->>>>>>> bf06d9e (global var)
     # Parse the response
     if response.status_code == 200:
         resultjson = response.json()
@@ -105,7 +100,7 @@ def handle_answer():
     code = data['code']
 
     # TODO: Generate an answer based on the query and code.
-    # Use LLM model to generate a natural language answer based on the query and the understood code.
+    # Use GPT-4 model to generate a natural language answer based on the query and the understood code.
 
     # Placeholder for the generated answer.
     answer = "Generated answer goes here."
