@@ -81,7 +81,7 @@ def handle_query():
         "model": "claude-instant-v1",
         "task_id": "1",
         "user_name": "test"
-}
+    }
 
     # Make the POST request to the API
     response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
