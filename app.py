@@ -45,14 +45,21 @@ def handle_code():
 
 @app.route('/api/query', methods=['POST'])
 def handle_query():
-    query = request.json.get('query')
-    if not query:
-        return jsonify({'error': 'No query provided'}), 400
+    data = request.get_json()
+    if 'messages' not in data:
+        return jsonify({'error': 'No messages provided'}), 400
+
+    # Extract the last user's message as the query
+    messages = data['messages']
+    user_messages = [message for message in messages if message['role'] == 'user']
+    if not user_messages:
+        return jsonify({'error': 'No user messages provided'}), 400
+    query = user_messages[-1]['message']
 
     # Define the API endpoint
     endpoint = 'https://smartprompt-globaldev.zoomdev.us/v1/zoom-ai-hackathon/invoke'
 
-    # Define the headers. Replace 'api-key' with Kevin's OpenAI API key.
+    # Define the headers. Replace 'api-key' with Claude.
     headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpbnRlZ3JhdGlvbi1hZGxlciIsImF1ZCI6InNtYXJ0X3Byb21wdCIsImV4cCI6MTY4ODQ5MDcwMX0.KYfmZ_HuQDd5Yhe0IXpkWWLJqkJ0ZHdjkkYPvWxJhN9fxru7iIRCZqd8BY8UBub7eovWhDxNIucoS1Dd5wj4LQ'
@@ -74,6 +81,11 @@ def handle_query():
 
     # Make the POST request to the API
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+<<<<<<< HEAD
+=======
+    print(response)
+
+>>>>>>> bf06d9e (global var)
     # Parse the response
     if response.status_code == 200:
         resultjson = response.json()
@@ -93,7 +105,7 @@ def handle_answer():
     code = data['code']
 
     # TODO: Generate an answer based on the query and code.
-    # Use GPT-4 model to generate a natural language answer based on the query and the understood code.
+    # Use LLM model to generate a natural language answer based on the query and the understood code.
 
     # Placeholder for the generated answer.
     answer = "Generated answer goes here."
