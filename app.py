@@ -6,8 +6,10 @@ import pip._vendor.requests as requests
 
 app = Flask(__name__)
 
+code_ctx = ''
 @app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
+    global code_ctx
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
 
@@ -36,6 +38,8 @@ def handle_code():
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree, include_attributes=True)
 
+        code_ctx = ast_string
+
         print('here is your code, in readable form: ' + ast_string)
 
         # Now, ast_string is a string representation of the AST.
@@ -45,6 +49,7 @@ def handle_code():
 
 @app.route('/api/query', methods=['POST'])
 def handle_query():
+    global code_ctx
     data = request.get_json()
     if 'messages' not in data:
         return jsonify({'error': 'No messages provided'}), 400
@@ -55,7 +60,6 @@ def handle_query():
     if not user_messages:
         return jsonify({'error': 'No user messages provided'}), 400
     query = user_messages[-1]['message']
-
     # Define the API endpoint
     endpoint = 'https://smartprompt-globaldev.zoomdev.us/v1/zoom-ai-hackathon/invoke'
 
@@ -80,12 +84,10 @@ def handle_query():
 }
 
     # Make the POST request to the API
-    response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-<<<<<<< HEAD
-=======
-    print(response)
+    response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
 
->>>>>>> bf06d9e (global var)
+    response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+    
     # Parse the response
     if response.status_code == 200:
         resultjson = response.json()
