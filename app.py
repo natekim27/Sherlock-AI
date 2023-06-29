@@ -34,7 +34,7 @@ def handle_code():
         tree = ast.parse(code_content)
 
         # Convert the AST into a string representation.
-        ast_string = ast.dump(tree, include_attributes=True, indent=2)
+        ast_string = ast.dump(tree, include_attributes=True)
 
         print('here is your code, in readable form: ' + ast_string)
 
@@ -61,17 +61,24 @@ def handle_query():
     # Define the data. The 'prompt' is the query from the user.
     # 'max_tokens' is the maximum length of the generated response.
     data = {
-        'prompt': query,
-        'max_tokens': 150
-    }
+        "messages": [
+            {
+                "role": "user",
+                "message": query
+            }
+        ],
+        "model": "claude-instant-v1",
+        "task_id": "1",
+        "user_name": "nate"
+}
 
     # Make the POST request to the API
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-
     # Parse the response
     if response.status_code == 200:
-        result = response.json()
-        return jsonify({'message': result['choices'][0]['text'].strip()}), 200
+        resultjson = response.json()
+        result = resultjson.get('result', 'No Response Found')
+        return jsonify(result), 200
     else:
         return jsonify({'error': "An error occurred: " + response.text}), 400
 
