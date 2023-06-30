@@ -41,7 +41,10 @@ def handle_code():
         code_ctx.append({"message": ast_string, "role": "user"})
         code_ctx.append({"message": 'Awesome, thanks for giving me your code to analyze', "role": "assistant"})
         codectxfile = open(file_path+'.ctx.txt', 'w')
-        codectxfile.write(str(code_ctx))
+
+        cheese = {"key": code_ctx}
+
+        codectxfile.write(str(cheese))
         codectxfile.close
 
         print('here is your code, in readable form: ' + ast_string)
@@ -60,16 +63,23 @@ def handle_query():
     if 'query' not in data:
         return jsonify({'error': 'No messages provided'}), 400
     msg = {"message": data['query'], "role": "user"}
-    filename = data["filename"] + ".ctx.txt"
 
-    if not os.path.exists(filename):
+    filename = data["filename"] + ".ctx.txt"
+    print(filename)
+    if not os.path.exists("uploads/" + filename):
         return jsonify({'error': 'File Does Not Exist'}), 400
     code_ctx = [] #should no longer be global when you're done
-    
+
+    os.chdir(os.getcwd() + '/uploads')
     with open(filename, 'r') as f:
-        content = f.read()
+        cheese = f.read()
+
+    print(type(cheese))
+    cheese = ast.literal_eval(cheese)
+    print(cheese)
     
-    code_ctx = json.loads(content)
+    # code_ctx = json.loads(content)
+    code_ctx = cheese["key"]
     code_ctx.append(msg)
 
     # Extract the last user's message as the query
@@ -104,7 +114,7 @@ def handle_query():
     code_ctx.append({"role": "assistant", "message": response_msg})
     
     #write code_ctx back into the file it came from
-    codectxfile = open(filename+'.ctx.txt', 'w')
+    codectxfile = open(filename, 'w')
     codectxfile.write(str(code_ctx))
     codectxfile.close
     
