@@ -38,12 +38,15 @@ def handle_code():
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
 
-        code_ctx = ast_string
+        code_ctx.append({"query": ast_string, "role": "user"})
+        codectxfile = open(file_path+'ctx.txt', 'w')
+        codectxfile.write(' '.join(code_ctx))
+        codectxfile.close
 
         print('here is your code, in readable form: ' + ast_string)
-        astfile = open('ast.txt', 'w')
-        astfile.write(ast_string)
-        astfile.close
+        #astfile = open('ast.txt', 'w')
+        #astfile.write(ast_string)
+        #astfile.close
 
         # Now, ast_string is a string representation of the AST.
 
