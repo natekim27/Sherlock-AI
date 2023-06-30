@@ -6,10 +6,10 @@ import pip._vendor.requests as requests
 
 app = Flask(__name__)
 
-code_ctx = []
+
 @app.route('/api/code', methods=['GET', 'POST'])
 def handle_code():
-    global code_ctx
+    code_ctx = []
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
 
@@ -41,7 +41,7 @@ def handle_code():
         code_ctx.append({"message": ast_string, "role": "user"})
         code_ctx.append({"message": 'Awesome, thanks for giving me your code to analyze', "role": "assistant"})
         codectxfile = open(file_path+'ctx.txt', 'w')
-        codectxfile.write(' '.join(code_ctx))
+        codectxfile.write(str(code_ctx))
         codectxfile.close
 
         print('here is your code, in readable form: ' + ast_string)
