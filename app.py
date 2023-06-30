@@ -40,11 +40,7 @@ def handle_code():
 
         code_ctx.append({"message": ast_string, "role": "user"})
         code_ctx.append({"message": 'Awesome, thanks for giving me your code to analyze', "role": "assistant"})
-<<<<<<< HEAD
         codectxfile = open(file_path+'.ctx.txt', 'w')
-=======
-        codectxfile = open(file_path+'ctx.txt', 'w')
->>>>>>> refs/remotes/origin/main
         codectxfile.write(str(code_ctx))
         codectxfile.close
 
@@ -64,7 +60,7 @@ def handle_query():
     if 'query' not in data:
         return jsonify({'error': 'No messages provided'}), 400
     msg = {"message": data['query'], "role": "user"}
-    filename = data["filename"]
+    filename = data["filename"] + ".ctx.txt"
 
     if not os.path.exists(filename):
         return jsonify({'error': 'File Does Not Exist'}), 400
