@@ -40,8 +40,8 @@ def handle_code():
 
         code_ctx.append({"message": ast_string, "role": "user"})
         code_ctx.append({"message": 'Awesome, thanks for giving me your code to analyze', "role": "assistant"})
-        codectxfile = open(file_path+'ctx.txt', 'w')
-        codectxfile.write(' '.join(code_ctx))
+        codectxfile = open(file_path+'.ctx.txt', 'w')
+        codectxfile.write(str(code_ctx))
         codectxfile.close
 
         print('here is your code, in readable form: ' + ast_string)
@@ -56,12 +56,22 @@ def handle_code():
 
 @app.route('/api/query', methods=['POST'])
 def handle_query():
-    global code_ctx
     data = request.get_json()
     if 'query' not in data:
         return jsonify({'error': 'No messages provided'}), 400
     msg = {"message": data['query'], "role": "user"}
+    filename = data["filename"]
+
+    if not os.path.exists(filename):
+        return jsonify({'error': 'File Does Not Exist'}), 400
+    code_ctx = [] #should no longer be global when you're done
+    
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    code_ctx = json.loads(content)
     code_ctx.append(msg)
+
     # Extract the last user's message as the query
     # messages = data['messages']
     # user_messages = [message for message in messages if message['role'] == 'user']
@@ -90,8 +100,14 @@ def handle_query():
     # response = requests.post(data['task_id'], data['user_name'], data['model'], query, code_ctx)
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
     response_msg = response.json()['result']
+    
     code_ctx.append({"role": "assistant", "message": response_msg})
-    print(code_ctx)
+    
+    #write code_ctx back into the file it came from
+    codectxfile = open(filename+'.ctx.txt', 'w')
+    codectxfile.write(str(code_ctx))
+    codectxfile.close
+    
     # Parse the response
     if response.status_code == 200:
         resultjson = response.json()
