@@ -38,7 +38,8 @@ def handle_code():
         # Convert the AST into a string representation.
         ast_string = ast.dump(tree)
 
-        code_ctx.append({"query": ast_string, "role": "user"})
+        code_ctx.append({"message": ast_string, "role": "user"})
+        code_ctx.append({"message": 'Awesome, thanks for giving me your code to analyze', "role": "assistant"})
         codectxfile = open(file_path+'ctx.txt', 'w')
         codectxfile.write(' '.join(code_ctx))
         codectxfile.close
