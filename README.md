@@ -1,4 +1,4 @@
-# sherlock
+# Sherlock AI
 TO START:
 <br>
 source env/bin/activate
